@@ -23,4 +23,11 @@ public class Country {
     @Column(unique=true)
     @NonNull
     private String name;
+
+    @OneToMany(mappedBy="country")
+    @ToString.Exclude
+    // Essayer sans "mappedBy" pour voir le schémma relationnel généré
+    // @OneToMany
+    private List<City> cities = new ArrayList<>();
+
 }

@@ -11,13 +11,14 @@ import monprojet.entity.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+
 @Log4j2 // Génère le 'logger' pour afficher les messages de trace
 @DataJpaTest
 public class CountryRepositoryTest {
 
     @Autowired
     private CountryRepository countryDAO;
-
     @Test
     void lesNomsDePaysSontTousDifferents() {
         log.info("On vérifie que les noms de pays sont tous différents ('unique') dans la table 'Country'");
@@ -35,9 +36,26 @@ public class CountryRepositoryTest {
     @Sql("test-data.sql") // On peut charger des données spécifiques pour un test
     void onSaitCompterLesEnregistrements() {
         log.info("On compte les enregistrements de la table 'Country'");
-        int combienDePaysDansLeJeuDeTest = 3 + 1; // 3 dans data.sql, 1 dans test-data.sql
+        int combienDePaysDansLeJeuDeTest = 4 + 1; // 3 dans data.sql, 1 dans test-data.sql
         long nombre = countryDAO.count();
-        assertEquals(combienDePaysDansLeJeuDeTest, nombre, "On doit trouver 4 pays" );
+        assertEquals(combienDePaysDansLeJeuDeTest, nombre, "On doit trouver 5 pays" );
     }
 
+    @Test
+    @Sql("test-data.sql")
+    void testCalculPopulation() {
+        Integer countryId = 1; // Remplacez par l'ID du pays que vous voulez tester
+        Integer population = countryDAO.calculPopulation(countryId);
+        assertNotNull(population);
+        System.out.println("Population du pays avec l'id " + countryId + ": " + population);
+    }
+
+    @Test
+    public void testGetCountryListePopulation() {
+        List<CountryRepository.CountryPopulation> liste = countryDAO.getCountryPopulationList();
+        assertNotNull(liste);
+        for (CountryRepository.CountryPopulation p : liste) {
+            System.out.println("Pays : " + p.getCountryName() + ", Population: " + p.getPopulation());
+        }
+    }
 }
